@@ -4,40 +4,40 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Core.Interfaces;
 
-namespace WebAPI.Features.Containers
+namespace WebAPI.Features.Rentals
 {
   [Controller]
   [Route("[controller]")]
-  public class ContainerController : ControllerBase
+  public class RentalController : ControllerBase
   {
-    private readonly BaseRepository<Container> _repository;
+    private readonly BaseRepository<Rental> _repository;
 
-    public ContainerController(BaseRepository<Container> repository)
+    public RentalController(BaseRepository<Rental> repository)
     {
       _repository = repository;
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateAsync([FromBody]Container container)
+    public async Task<IActionResult> CreateAsync([FromBody] Rental container)
     {
       var result = await _repository.CreateAsync(container);
       return result > 0 ? new OkObjectResult(container) : Conflict();
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<Container?> GetAsync([FromRoute]Guid id)
+    public async Task<Rental?> GetAsync([FromRoute] Guid id)
     {
       return await _repository.GetAsync(id);
     }
 
     [HttpGet]
-    public async Task<List<Container>> GetAllAsync()
+    public async Task<List<Rental>> GetAllAsync()
     {
       return await _repository.GetAllAsync();
     }
 
     [HttpPatch]
-    public async Task<IActionResult> UpdateAsync([FromBody]Container container)
+    public async Task<IActionResult> UpdateAsync([FromBody] Rental container)
     {
       var result = await _repository.UpdateAsync(container);
       return result > 0 ? new OkObjectResult(container) : NotFound();

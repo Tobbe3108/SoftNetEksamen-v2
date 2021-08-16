@@ -1,26 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using SQLite;
-using WebAPI.Core.Interfaces;
+using WebAPI.Core.Entities;
 
-namespace WebAPI.Features.Containers
+namespace WebAPI.Core.Interfaces
 {
-  public class ContainerService : IContainerService
+  public abstract class BaseRepository<T> where T : TableBase, new()
   {
     private readonly string _connectionString;
 
-    public ContainerService(string connectionString)
+    protected BaseRepository(string connectionString)
     {
       _connectionString = connectionString;
+      Task.Run(CreateTableAsync).Wait();
     }
 
-    public async Task<bool> CreateTableAsync()
+    private async Task<bool> CreateTableAsync()
     {
       var asyncConnection = new SQLiteAsyncConnection(_connectionString);
       try
       {
-        await asyncConnection.CreateTableAsync<Container>(CreateFlags.AllImplicit);
+        await asyncConnection.CreateTableAsync<T>(CreateFlags.AllImplicit);
         return await Task.FromResult(true);
       }
       finally
@@ -29,12 +31,12 @@ namespace WebAPI.Features.Containers
       }
     }
 
-    public async Task<int> CreateAsync(Container container)
+    public async Task<int> CreateAsync(T value)
     {
       var asyncConnection = new SQLiteAsyncConnection(_connectionString);
       try
       {
-        return await asyncConnection.InsertAsync(container);
+        return await asyncConnection.InsertAsync(value);
       }
       finally
       {
@@ -42,12 +44,12 @@ namespace WebAPI.Features.Containers
       }
     }
 
-    public async Task<List<Container>> GetAllAsync()
+    public async Task<List<T>> GetAllAsync()
     {
       var asyncConnection = new SQLiteAsyncConnection(_connectionString);
       try
       {
-        return await asyncConnection.Table<Container>().ToListAsync();
+        return await asyncConnection.Table<T>().ToListAsync();
       }
       finally
       {
@@ -55,13 +57,13 @@ namespace WebAPI.Features.Containers
       }
     }
 
-    public async Task<Container?> GetAsync(Guid id)
+    public async Task<T?> GetAsync(Guid id)
     {
       var asyncConnection = new SQLiteAsyncConnection(_connectionString);
       try
+
       {
-        var query = asyncConnection.Table<Container>().Where(s => s.Id == id);
-        return await query.FirstOrDefaultAsync();
+        return await asyncConnection.GetAsync<T>(id);
       }
       finally
       {
@@ -69,12 +71,12 @@ namespace WebAPI.Features.Containers
       }
     }
 
-    public async Task<int> UpdateAsync(Container container)
+    public async Task<int> UpdateAsync(T value)
     {
       var asyncConnection = new SQLiteAsyncConnection(_connectionString);
       try
       {
-        return await asyncConnection.UpdateAsync(container);
+        return await asyncConnection.UpdateAsync(value);
       }
       finally
       {
@@ -87,7 +89,7 @@ namespace WebAPI.Features.Containers
       var asyncConnection = new SQLiteAsyncConnection(_connectionString);
       try
       {
-        return await asyncConnection.DeleteAsync<Container>(id);
+        return await asyncConnection.DeleteAsync<T>(id);
       }
       finally
       {

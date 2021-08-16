@@ -1,12 +1,10 @@
 ﻿using System;
-using SQLite;
+using WebAPI.Core.Entities;
 
 namespace WebAPI.Features.Containers
 {
-  public record Container
+  public record Container : TableBase
   {
-    [PrimaryKey, AutoIncrement]
-    public Guid Id { get; set; }
     public int Shelves { get; set; }
     public DateTime Rented { get; set; }
   }

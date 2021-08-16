@@ -8,6 +8,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using WebAPI.Core.Interfaces;
 using WebAPI.Features.Containers;
+using WebAPI.Features.Customers;
+using WebAPI.Features.Rentals;
 
 namespace WebAPI
 {
@@ -20,7 +22,7 @@ namespace WebAPI
 
     public IConfiguration Configuration { get; private set; }
     public ILifetimeScope AutofacContainer { get; private set; }
-    
+
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
@@ -30,7 +32,10 @@ namespace WebAPI
 
     public void ConfigureContainer(ContainerBuilder builder)
     {
-      builder.Register(_ => new ContainerService(Configuration.GetConnectionString("SQLite"))).As<IContainerService>();
+      var connectionString = Configuration.GetConnectionString("SQLite");
+      builder.Register(_ => new ContainerRepository(connectionString)).As(typeof(BaseRepository<Container>));
+      builder.Register(_ => new CustomerRepository(connectionString)).As(typeof(BaseRepository<Customer>));
+      builder.Register(_ => new RentalRepository(connectionString)).As(typeof(BaseRepository<Rental>));
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,9 +43,6 @@ namespace WebAPI
     {
       AutofacContainer = app.ApplicationServices.GetAutofacRoot();
 
-      var containerService = AutofacContainer.Resolve<IContainerService>();
-      containerService.CreateTableAsync();
-      
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
