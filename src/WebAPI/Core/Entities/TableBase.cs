@@ -1,11 +1,10 @@
 ﻿using System;
-using SQLite;
+using ServiceStack.DataAnnotations;
 
 namespace WebAPI.Core.Entities
 {
   public abstract record TableBase
   {
-    [PrimaryKey, AutoIncrement]
-    public Guid Id { get; set; }
+    [PrimaryKey, Required, AutoId] public Guid? Id { get; set; }
   }
 }

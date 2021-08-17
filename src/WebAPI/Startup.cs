@@ -6,10 +6,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using ServiceStack.Data;
+using ServiceStack.OrmLite;
+using Swashbuckle.AspNetCore.SwaggerUI;
 using WebAPI.Core.Interfaces;
-using WebAPI.Features.Containers;
-using WebAPI.Features.Customers;
-using WebAPI.Features.Rentals;
+using WebAPI.Features.ContactPerson;
+using WebAPI.Features.Container;
+using WebAPI.Features.Customer;
+using WebAPI.Features.Rental;
+using Table = WebAPI.Features.Customer.Table;
 
 namespace WebAPI
 {
@@ -27,27 +32,44 @@ namespace WebAPI
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddControllers();
-      services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPI", Version = "v1" }); });
+      services.AddSwaggerGen(c =>
+      {
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPI", Version = "v1" });
+        c.CustomSchemaIds(type => type.FullName);
+      });
     }
 
     public void ConfigureContainer(ContainerBuilder builder)
     {
       var connectionString = Configuration.GetConnectionString("SQLite");
-      builder.Register(_ => new ContainerRepository(connectionString)).As(typeof(BaseRepository<Container>));
-      builder.Register(_ => new CustomerRepository(connectionString)).As(typeof(BaseRepository<Customer>));
-      builder.Register(_ => new RentalRepository(connectionString)).As(typeof(BaseRepository<Rental>));
+      builder.Register(_ => new OrmLiteConnectionFactory(connectionString, SqliteDialect.Provider))
+        .As<IDbConnectionFactory>();
+      
+      builder.RegisterType<ContainerRepository>().AsSelf();
+      builder.RegisterType<BaseRepository<Table>>().AsSelf();
+      builder.RegisterType<Repository>().AsSelf();
+      builder.RegisterType<BaseRepository<Features.ContactPerson.Table>>().AsSelf();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
       AutofacContainer = app.ApplicationServices.GetAutofacRoot();
+      
+      using (var dbConnection = AutofacContainer.Resolve<IDbConnectionFactory>().Open())
+      {
+        dbConnection.CreateTableIfNotExists(typeof(Features.Container.Table), typeof(Features.ContactPerson.Table), typeof(Table), typeof(Features.Rental.Table));
+      }
 
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
         app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPI v1"));
+        app.UseSwaggerUI(c =>
+        {
+          c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPI v1");
+          c.DocExpansion(DocExpansion.None);
+        });
       }
 
       app.UseHttpsRedirection();
