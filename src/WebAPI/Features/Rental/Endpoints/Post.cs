@@ -17,7 +17,7 @@ namespace WebAPI.Features.Rental.Endpoints
   public record PostRequest
   {
     public Guid ContainerId { get; set; }
-    public Guid CustomerId { get; set; } 
+    public Guid CustomerId { get; set; }
     public DateTime Rented { get; set; }
     public DateTime? Returned { get; set; }
   }

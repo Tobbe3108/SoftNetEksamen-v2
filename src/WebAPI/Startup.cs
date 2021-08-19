@@ -10,9 +10,7 @@ using ServiceStack.Data;
 using ServiceStack.OrmLite;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using WebAPI.Core.Base;
-using WebAPI.Features.ContactPerson;
 using WebAPI.Features.Container;
-using WebAPI.Features.Customer;
 using WebAPI.Features.Rental;
 using Table = WebAPI.Features.Customer.Table;
 
@@ -25,7 +23,7 @@ namespace WebAPI
       Configuration = configuration;
     }
 
-    public IConfiguration Configuration { get; private set; }
+    public IConfiguration Configuration { get; }
     public ILifetimeScope AutofacContainer { get; private set; }
 
     // This method gets called by the runtime. Use this method to add services to the container.
@@ -44,7 +42,7 @@ namespace WebAPI
       var connectionString = Configuration.GetConnectionString("SQLite");
       builder.Register(_ => new OrmLiteConnectionFactory(connectionString, SqliteDialect.Provider))
         .As<IDbConnectionFactory>();
-      
+
       builder.RegisterType<ContainerRepository>().AsSelf();
       builder.RegisterType<BaseRepository<Table>>().AsSelf();
       builder.RegisterType<Repository>().AsSelf();
@@ -55,17 +53,15 @@ namespace WebAPI
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
       AutofacContainer = app.ApplicationServices.GetAutofacRoot();
-      
+
       using (var dbConnection = AutofacContainer.Resolve<IDbConnectionFactory>().Open())
       {
-        dbConnection.CreateTableIfNotExists(typeof(Features.Container.Table), typeof(Features.ContactPerson.Table), typeof(Table), typeof(Features.Rental.Table));
+        dbConnection.CreateTableIfNotExists(typeof(Features.Container.Table), typeof(Features.ContactPerson.Table),
+          typeof(Table), typeof(Features.Rental.Table));
       }
 
-      if (env.IsDevelopment())
-      {
-        app.UseDeveloperExceptionPage();
-      }
-      
+      if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+
       app.UseSwagger();
       app.UseSwaggerUI(c =>
       {

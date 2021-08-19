@@ -18,7 +18,7 @@ namespace WebAPI.Features.Customer.Endpoints
   public record PatchRequest
   {
     public Guid Id { get; set; }
-    public Guid ContactPersonId { get; set; }
+    public string? Name { get; set; }
     public string? Address { get; set; }
     public string? Cvr { get; set; }
     public string? Mail { get; set; }
