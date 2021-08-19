@@ -5,7 +5,7 @@ using ServiceStack.Data;
 using ServiceStack.OrmLite;
 using WebAPI.Core.Entities;
 
-namespace WebAPI.Core.Interfaces
+namespace WebAPI.Core.Base
 {
   public class BaseRepository<T> where T : TableBase, new()
   {

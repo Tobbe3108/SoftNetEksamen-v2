@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebAPI.Core.Interfaces;
+using WebAPI.Core.Base;
 
 // ReSharper disable once CheckNamespace
 namespace WebAPI.Features.ContactPerson.Endpoints

@@ -9,7 +9,7 @@ using Microsoft.OpenApi.Models;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
 using Swashbuckle.AspNetCore.SwaggerUI;
-using WebAPI.Core.Interfaces;
+using WebAPI.Core.Base;
 using WebAPI.Features.ContactPerson;
 using WebAPI.Features.Container;
 using WebAPI.Features.Customer;

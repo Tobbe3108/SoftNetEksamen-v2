@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
-using WebAPI.Core.Interfaces;
+using WebAPI.Core.Base;
 
 namespace WebAPI.Features.Container
 {
