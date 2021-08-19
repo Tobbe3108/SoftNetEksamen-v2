@@ -21,6 +21,6 @@ namespace WebAPI.Features.Rental.Endpoints
     public Guid ContainerId { get; set; }
     public Guid CustomerId { get; set; }
     public DateTime Rented { get; set; }
-    public DateTime Returned { get; set; }
+    public DateTime? Returned { get; set; }
   }
 }

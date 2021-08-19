@@ -3,6 +3,7 @@ using WebAPI.Core.Entities;
 
 namespace WebAPI.Features.ContactPerson
 {
+  [Alias("ContactPerson")]
   public record Table : TableBase
   {
     [Required] public string? Name { get; set; }

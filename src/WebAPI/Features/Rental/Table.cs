@@ -4,6 +4,7 @@ using WebAPI.Core.Entities;
 
 namespace WebAPI.Features.Rental
 {
+  [Alias("Rental")]
   public record Table : TableBase
   {
     [ForeignKey(typeof(Container.Table)), Required]

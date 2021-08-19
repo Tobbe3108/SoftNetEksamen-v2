@@ -7,7 +7,7 @@ namespace WebAPI.Features.Container.Endpoints
 {
   public partial class ContainerController
   {
-    [HttpGet("{customerId:guid}")]
+    [HttpGet("{id:guid}")]
     public async Task<Table?> GetAsync([FromRoute] Guid id)
     {
       return await _repository.GetAsync(id);

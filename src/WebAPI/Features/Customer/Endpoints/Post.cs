@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,9 +16,9 @@ namespace WebAPI.Features.Customer.Endpoints
 
   public record PostRequest
   {
-    public string? Name { get; set; }
-    public string? JobTitle { get; set; }
+    public Guid ContactPersonId { get; set; }
+    public string? Address { get; set; }
+    public string? Cvr { get; set; }
     public string? Mail { get; set; }
-    public string? Phone { get; set; }
   }
 }

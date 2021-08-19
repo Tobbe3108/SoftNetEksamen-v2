@@ -6,7 +6,7 @@ namespace WebAPI.Features.Container.Endpoints
 {
   public partial class ContainerController
   {
-    [HttpDelete("{customerId:guid}")]
+    [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
     {
       var result = await _repository.DeleteAsync(id);

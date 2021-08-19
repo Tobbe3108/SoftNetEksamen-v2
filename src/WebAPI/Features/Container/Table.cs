@@ -4,6 +4,7 @@ using WebAPI.Core.Entities;
 
 namespace WebAPI.Features.Container
 {
+  [Alias("Container")]
   public record Table : TableBase
   {
     [Required] public int Shelves { get; set; }
